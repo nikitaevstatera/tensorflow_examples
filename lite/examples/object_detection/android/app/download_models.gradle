@@ -27,5 +27,10 @@ task copyTestModel(type: Copy, dependsOn: downloadModelFile) {
     into project.ext.TEST_ASSETS_DIR
 }
 
+task copyWheelsModel(type: Copy, dependsOn: downloadModelFile) {
+    from project.ext.ASSET_DIR + '/yolov8n_imgsz1024_ep1100_int8.tflite'
+    into project.ext.TEST_ASSETS_DIR
+}
+
 preBuild.dependsOn downloadModelFile, downloadModelFile0, downloadModelFile1, downloadModelFile2,
-        copyTestModel
+        copyTestModel, copyWheelsModel

@@ -28,13 +28,13 @@ import org.tensorflow.lite.task.vision.detector.Detection
 import org.tensorflow.lite.task.vision.detector.ObjectDetector
 
 class ObjectDetectorHelper(
-  var threshold: Float = 0.5f,
-  var numThreads: Int = 2,
-  var maxResults: Int = 3,
-  var currentDelegate: Int = 0,
-  var currentModel: Int = 0,
-  val context: Context,
-  val objectDetectorListener: DetectorListener?
+    var threshold: Float = 0.5f,
+    var numThreads: Int = 2,
+    var maxResults: Int = 3,
+    var currentDelegate: Int = 0,
+    var currentModel: Int = 0,
+    val context: Context,
+    val objectDetectorListener: DetectorListener?
 ) {
 
     // For this example this needs to be a var so it can be reset on changes. If the ObjectDetector
@@ -68,6 +68,7 @@ class ObjectDetectorHelper(
             DELEGATE_CPU -> {
                 // Default
             }
+
             DELEGATE_GPU -> {
                 if (CompatibilityList().isDelegateSupportedOnThisDevice) {
                     baseOptionsBuilder.useGpu()
@@ -75,6 +76,7 @@ class ObjectDetectorHelper(
                     objectDetectorListener?.onError("GPU is not supported on this device")
                 }
             }
+
             DELEGATE_NNAPI -> {
                 baseOptionsBuilder.useNnapi()
             }
@@ -88,6 +90,7 @@ class ObjectDetectorHelper(
                 MODEL_EFFICIENTDETV0 -> "efficientdet-lite0.tflite"
                 MODEL_EFFICIENTDETV1 -> "efficientdet-lite1.tflite"
                 MODEL_EFFICIENTDETV2 -> "efficientdet-lite2.tflite"
+                MODEL_WHEELS -> "yolov8n_imgsz1024_ep1100_int8.tflite"
                 else -> "mobilenetv1.tflite"
             }
 
@@ -119,6 +122,10 @@ class ObjectDetectorHelper(
                 .add(Rot90Op(-imageRotation / 90))
                 .build()
 
+        // Взято тут: https://github.com/AarohiSingla/Object-Detection-Android-App
+        //val tensorImage2 = TensorImage(DataType.FLOAT32)
+        //tensorImage2.load(image)
+
         // Preprocess the image and convert it into a TensorImage for detection.
         val tensorImage = imageProcessor.process(TensorImage.fromBitmap(image))
 
@@ -128,16 +135,17 @@ class ObjectDetectorHelper(
             results,
             inferenceTime,
             tensorImage.height,
-            tensorImage.width)
+            tensorImage.width
+        )
     }
 
     interface DetectorListener {
         fun onError(error: String)
         fun onResults(
-          results: MutableList<Detection>?,
-          inferenceTime: Long,
-          imageHeight: Int,
-          imageWidth: Int
+            results: MutableList<Detection>?,
+            inferenceTime: Long,
+            imageHeight: Int,
+            imageWidth: Int
         )
     }
 
@@ -149,5 +157,6 @@ class ObjectDetectorHelper(
         const val MODEL_EFFICIENTDETV0 = 1
         const val MODEL_EFFICIENTDETV1 = 2
         const val MODEL_EFFICIENTDETV2 = 3
+        const val MODEL_WHEELS = 4
     }
 }
